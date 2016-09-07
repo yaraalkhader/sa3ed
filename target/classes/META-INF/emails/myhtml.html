@@ -1,0 +1,18 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-3.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Congratulation you have registered to our network</title>
+</head>
+<body>
+
+	Dear
+	<p th:text="${name}">Name</p>
+	: to continue with the registration process click the registration link
+
+	<p th:text="${link}">Link</p>
+
+	Best Regards, SkilledRUs
+
+</body>
+</html>

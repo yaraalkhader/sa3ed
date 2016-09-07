@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<description>Example configuration to get you started.</description>
+
+	<!-- <context:component-scan base-package="me.sa3ed.notifications" /> -->
+
+	<bean class="me.sa3ed.notifications.NotificatoinHandler" name="registrationValidationHandler">
+		<property name="rule" ref="registrationRule"></property>
+		<property name="action" ref="registrationEmail"></property>
+	</bean>
+
+	<bean class="me.sa3ed.notifications.config.rule.impl.QueryNotificationRule"
+		name="registrationRule">
+		<property name="queryStr">
+			<value>from Notification
+				n where n.subject =
+				'registeration_verification' and dileveryCount = 0
+			</value>
+		</property>
+	</bean>
+
+
+	<bean
+		class="me.sa3ed.notifications.config.action.impl.EmailNotificationAction"
+		name="registrationEmail">
+		<constructor-arg name="from" value="info@sa3ed.me"></constructor-arg>
+		<constructor-arg name="subject" value="Validate Your Account"></constructor-arg>
+		<constructor-arg name="linkCreator" ref="validationLinkCreator"></constructor-arg>
+		<constructor-arg name="templatePath" value="registration"></constructor-arg>
+		<constructor-arg name="templateParams">
+			<list value-type="java.lang.String">
+				<value>name</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg name="statusUpdate">
+			<bean class="me.sa3ed.notifications.model.visitors.RegistrationValidation">
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean class="me.sa3ed.notifications.config.links.RegistrationLinkCreator"
+		name="validationLinkCreator"></bean>
+	<!-- start of notification channel jobPostAlert -->
+	<bean class="me.sa3ed.notifications.NotificatoinHandler" name="jobPostAlert">
+		<property name="rule" ref="jobApplicationAlerts"></property>
+		<property name="action" ref="jobApplicationEmail"></property>
+	</bean>
+
+	<bean class="me.sa3ed.notifications.config.rule.impl.QueryNotificationRule"
+		name="jobApplicationAlerts">
+		<property name="queryStr">
+			<value>select jobPost.subscriber.email, jobPost.id,
+				jobPost.numberOfApplicants, jobPost.skill.englishDesc,
+				jobPost.jobDescription from JobPost jobPost where jobPost.status =
+				'updated'
+			</value>
+		</property>
+	</bean>
+
+
+	<bean
+		class="me.sa3ed.notifications.config.action.impl.EmailNotificationAction"
+		name="jobApplicationEmail">
+		<constructor-arg name="from" value="info@sa3ed.me"></constructor-arg>
+		<constructor-arg name="subject" value="You have new Job Applicants"></constructor-arg>
+		<constructor-arg name="linkCreator">
+			<null />
+		</constructor-arg>
+		<constructor-arg name="templatePath" value="jobApplicants"></constructor-arg>
+		<constructor-arg name="templateParams">
+			<list value-type="java.lang.String">
+				<value>numberOfApplicants</value>
+				<value>skillName</value>
+				<value>jobDescription</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg name="statusUpdate">
+			<bean class="me.sa3ed.notifications.model.visitors.JobPostUpdate">
+
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- forgot password -->
+	<bean class="me.sa3ed.notifications.NotificatoinHandler" name="forgotPasswordValidationHandler">
+		<property name="rule" ref="forgotPasswordRule"></property>
+		<property name="action" ref="forgotPasswordEmail"></property>
+	</bean>
+
+	<bean class="me.sa3ed.notifications.config.rule.impl.QueryNotificationRule"
+		name="forgotPasswordRule">
+		<property name="queryStr">
+			<value>from Notification
+				n where n.subject = 'forgot_password' and
+				dileveryCount = 0
+			</value>
+		</property>
+	</bean>
+
+
+	<bean
+		class="me.sa3ed.notifications.config.action.impl.EmailNotificationAction"
+		name="forgotPasswordEmail">
+		<constructor-arg name="from" value="info@sa3ed.me"></constructor-arg>
+		<constructor-arg name="subject" value="Password reset instructions"></constructor-arg>
+		<constructor-arg name="linkCreator" ref="forgotpasswrodLinkCreator"></constructor-arg>
+		<constructor-arg name="templatePath" value="forgotPassword"></constructor-arg>
+		<constructor-arg name="templateParams">
+			<list value-type="java.lang.String">
+				<value>name</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg name="statusUpdate">
+			<bean class="me.sa3ed.notifications.model.visitors.RegistrationValidation">
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean class="me.sa3ed.notifications.config.links.ForgetPasswordLinkCreator"
+		name="forgotpasswrodLinkCreator"></bean>
+</beans>
